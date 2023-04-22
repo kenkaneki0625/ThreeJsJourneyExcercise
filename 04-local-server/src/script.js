@@ -54,4 +54,26 @@ const renderer = new THREE.WebGLRenderer({
     canvas: document.querySelector('canvas.webgl')
 })
 renderer.setSize(sizes.width, sizes.height)
-renderer.render(scene, camera)
+
+let time = Date.now()
+
+//Animations
+const tick = () => {
+
+    //time
+    const currantTime = Date.now()
+    const deltaTime = currantTime - time
+    time = currantTime
+    
+
+    //update object
+    group.position.x += 0.0001 * deltaTime
+    group.position.y -= 0.0001 * deltaTime
+    group.rotation.z += 0.0001 * deltaTime
+
+    //render
+    renderer.render(scene, camera)
+
+    window.requestAnimationFrame(tick)
+}
+tick()
