@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import gsap from 'gsap';
 
 // Scene
 const scene = new THREE.Scene()
@@ -55,21 +56,11 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 
-//Clock
-const clock = new THREE.Clock()
+gsap.to(group.position, {duration: 1, delay: 1, x: 2})
+gsap.to(group.position, {duration: 1, delay: 2, x: 0})
 
 //Animations
 const tick = () => {
-
-    //Clock
-    const elapsedTime = clock.getElapsedTime()
-
-    //update object
-    // group.rotation.y = elapsedTime
-    group.rotation.y = Math.sin(elapsedTime)
-    group.position.y = Math.cos(elapsedTime)
-    camera.position.x = Math.tan(elapsedTime )
-    camera.lookAt(cube1.position)
 
     //render
     renderer.render(scene, camera)
