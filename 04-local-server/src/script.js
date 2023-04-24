@@ -4,31 +4,24 @@ import gsap from 'gsap';
 // Scene
 const scene = new THREE.Scene()
 
+//cursor
+const cursor = {
+    x:0, y:0
+}
+
+window.addEventListener('mousemove', (event) =>{
+    cursor.x = event.clientX / sizes.width - 0.5
+    cursor.y = -(event.clientY / sizes.height - 0.5)
+})
+
 const group = new THREE.Group()
-group.position.y = 1
-group.scale.y = .3
-group.rotateY(-1)
 scene.add(group)
 
 const cube1 = new THREE.Mesh(
-    new THREE.BoxGeometry(1,1,1),
+    new THREE.BoxGeometry(1,1,1,5,5,5),
     new THREE.MeshBasicMaterial({color: 'red'})
 )
 group.add(cube1)
-
-const cube2 = new THREE.Mesh(
-    new THREE.BoxGeometry(1,1,1),
-    new THREE.MeshBasicMaterial({color: 'blue'})
-)
-cube2.position.x=2
-group.add(cube2)
-
-const cube3 = new THREE.Mesh(
-    new THREE.BoxGeometry(1,1,1),
-    new THREE.MeshBasicMaterial({color: 'green'})
-)
-cube3.position.y=3
-group.add(cube3)
 
 
 //Axes helper
@@ -44,10 +37,11 @@ const sizes = {
 }
 
 // Camera
-const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height)
-camera.position.z = 3
-camera.position.x = 1
-camera.position.y = 1
+const camera = new THREE.PerspectiveCamera(100, sizes.width / sizes.height)
+camera.position.z = 2
+// camera.position.x = 2
+// camera.position.y = 2
+camera.lookAt(group.position)
 scene.add(camera)
 
 // Renderer
@@ -56,11 +50,24 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 
-gsap.to(group.position, {duration: 1, delay: 1, x: 2})
-gsap.to(group.position, {duration: 1, delay: 2, x: 0})
+const clock = new THREE.Clock()
 
 //Animations
 const tick = () => {
+    const elapsedTime = clock.getElapsedTime()
+    
+    // group.rotation.y = elapsedTime
+
+        // camera.position.x = cursor.x * 3
+        // camera.position.y = cursor.y * 3
+        // camera.lookAt(new THREE.Vector3())
+
+        camera.position.x = Math.sin(cursor.x * Math.PI * 2) *3
+        camera.position.z = Math.cos(cursor.x * Math.PI * 2) *3
+        camera.position.y = cursor.y * 3
+
+
+        camera.lookAt(group.position)
 
     //render
     renderer.render(scene, camera)
