@@ -34,9 +34,19 @@ scene.add(axesHelper)
 
 // Sizes
 const sizes = {
-    width: 800,
-    height: 600
+    width: window.innerWidth,
+    height: window.innerHeight
 }
+
+
+//resize handler
+window.addEventListener('resize',()=>{
+    sizes.width= window.innerWidth,
+    sizes.height= window.innerHeight
+    camera.aspect = sizes.width / sizes.height
+    camera.updateProjectionMatrix()
+    renderer.setSize(sizes.width, sizes.height)
+})
 
 // Camera
 const camera = new THREE.PerspectiveCamera(100, sizes.width / sizes.height)
@@ -58,6 +68,35 @@ const renderer = new THREE.WebGLRenderer({
     canvas: canvas
 })
 renderer.setSize(sizes.width, sizes.height)
+
+//pixel ratio
+renderer.setPixelRatio(Math.min(window.devicePixelRatio,2))
+
+//fullscreen
+window.addEventListener('dblclick', () =>
+{   
+    const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement
+    //wont work on safari lol
+    // if(!document.fullscreenElement){
+    //     canvas.requestFullscreen()
+    // }else{
+    //     document.exitFullscreen()
+    // }
+
+    if(!fullscreenElement){
+        if(canvas.requestFullscreen){
+            canvas.requestFullscreen()
+        }else if(canvas.webkitRequestFullscreen){
+            canvas.webkitRequestFullscreen()
+        }
+    }else{
+        if(document.exitFullscreen){
+            document.exitFullscreen()
+        }else if(document.webkitExitFullscreen){
+            document.webkitExitFullscreen()
+        }
+    }
+})
 
 const clock = new THREE.Clock()
 
