@@ -2,6 +2,36 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import gsap from 'gsap'
 import * as dat from 'dat.gui'
+
+
+// TEXTURES
+// const image = new Image()
+// const texture = new THREE.Texture(image)
+// image.onload=()=>{
+//     texture.needsUpdate = true
+// }
+// image.src = '/textures/door/color.jpg'
+const loadingManager = new THREE.LoadingManager()
+const textureLoader = new THREE.TextureLoader()
+const colorTexture = textureLoader.load('/textures/door/color.jpg')
+// const alphaTexture = textureLoader.load('/textures/door/alpha.jpg')
+// const heightTexture = textureLoader.load('/textures/door/height.jpg')
+// const normalTexture = textureLoader.load('/textures/door/normal.jpg')
+// const ambientOcclusionTexture = textureLoader.load('/textures/door/ambientOcclusion.jpg')
+// const metalnessTexture = textureLoader.load('/textures/door/metalness.jpg')
+// const roughnessTexture = textureLoader.load('/textures/door/roughness.jpg')
+
+// colorTexture.repeat.x=2
+// colorTexture.repeat.y=3
+// colorTexture.wrapS = THREE.MirroredRepeatWrapping
+// colorTexture.wrapT = THREE.RepeatWrapping
+// colorTexture.offset.x= 0.5
+// colorTexture.rotation = 1
+
+colorTexture.rotation = Math.PI/4
+colorTexture.center.x=0.5
+colorTexture.center.y=0.5
+
 /**
  * Base
  */
@@ -34,7 +64,7 @@ gui.add(group, 'visible')
 
 const cube1 = new THREE.Mesh(
     new THREE.BoxGeometry(1,1,1,5,5,5),
-    new THREE.MeshBasicMaterial({color: parameters.color})
+    new THREE.MeshBasicMaterial({map : colorTexture})
 )
 group.add(cube1)
 
