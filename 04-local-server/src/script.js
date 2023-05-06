@@ -4,7 +4,8 @@ import gsap from 'gsap'
 import * as dat from 'dat.gui'
 import { SphereGeometry } from 'three'
 
-
+//DEBUG
+const gui = new dat.GUI()
 
 
 const loadingManager = new THREE.LoadingManager()
@@ -76,6 +77,17 @@ window.addEventListener('resize', () =>
 // material.specular = new THREE.Color('green')
 
 const material = new THREE.MeshToonMaterial()
+material.metalness = 0.45
+material.roughness = 0.45
+material.map = colorTexture
+material.aoMap = ambientOcclusionTexture
+material.aoMapIntensity = 10
+material.displacementMap = heightTexture
+material.displacementScale=5
+
+gui.add(material,"metalness").min(0).max(1).step(0.0001)
+gui.add(material,"roughness").min(0).max(1).step(0.0001)
+gui.add(material,"aoMapIntensity").min(0).max(100).step(0.0001)
 
 //LIGHT
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
@@ -97,6 +109,10 @@ const tourus = new THREE.Mesh(
     new THREE.TorusGeometry(.3,.2,16,32),material
 )
 tourus.position.x=1.5
+sphere.geometry.setAttribute('uv2', new THREE.BufferAttribute(sphere.geometry.attributes.uv.array, 2))
+plane.geometry.setAttribute('uv2', new THREE.BufferAttribute(plane.geometry.attributes.uv.array, 2))
+tourus.geometry.setAttribute('uv2', new THREE.BufferAttribute(tourus.geometry.attributes.uv.array, 2))
+
 scene.add(sphere,plane,tourus)
 
 /**
