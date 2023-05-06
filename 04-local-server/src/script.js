@@ -2,35 +2,23 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import gsap from 'gsap'
 import * as dat from 'dat.gui'
+import { SphereGeometry } from 'three'
+
+//DEBUG
+const gui = new dat.GUI()
 
 
-// TEXTURES
-// const image = new Image()
-// const texture = new THREE.Texture(image)
-// image.onload=()=>{
-//     texture.needsUpdate = true
-// }
-// image.src = '/textures/door/color.jpg'
 const loadingManager = new THREE.LoadingManager()
 const textureLoader = new THREE.TextureLoader()
 const colorTexture = textureLoader.load('/textures/door/color.jpg')
-// const alphaTexture = textureLoader.load('/textures/door/alpha.jpg')
-// const heightTexture = textureLoader.load('/textures/door/height.jpg')
-// const normalTexture = textureLoader.load('/textures/door/normal.jpg')
-// const ambientOcclusionTexture = textureLoader.load('/textures/door/ambientOcclusion.jpg')
-// const metalnessTexture = textureLoader.load('/textures/door/metalness.jpg')
-// const roughnessTexture = textureLoader.load('/textures/door/roughness.jpg')
-
-// colorTexture.repeat.x=2
-// colorTexture.repeat.y=3
-// colorTexture.wrapS = THREE.MirroredRepeatWrapping
-// colorTexture.wrapT = THREE.RepeatWrapping
-// colorTexture.offset.x= 0.5
-// colorTexture.rotation = 1
-
-colorTexture.rotation = Math.PI/4
-colorTexture.center.x=0.5
-colorTexture.center.y=0.5
+const alphaTexture = textureLoader.load('/textures/door/alpha.jpg')
+const heightTexture = textureLoader.load('/textures/door/height.jpg')
+const normalTexture = textureLoader.load('/textures/door/normal.jpg')
+const ambientOcclusionTexture = textureLoader.load('/textures/door/ambientOcclusion.jpg')
+const metalnessTexture = textureLoader.load('/textures/door/metalness.jpg')
+const roughnessTexture = textureLoader.load('/textures/door/roughness.jpg')
+const matcapTexture = textureLoader.load('/textures/matcaps/4.png')
+const gradientTexture = textureLoader.load('/textures/gradients/3.jpg')
 
 /**
  * Base
@@ -38,44 +26,8 @@ colorTexture.center.y=0.5
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
 
-//debug
-const gui = new dat.GUI()
-const parameters = {
-    color: 0xff0000,
-    spin: () =>{
-        gsap.to(group.rotation, 
-            {duration:1,
-        y:group.rotation.y + Math.PI *2})
-    }
-}
-
-
 // Scene
 const scene = new THREE.Scene()
-
-const group = new THREE.Group()
-scene.add(group)
-
-gui.add(group.position, 'y', -3, 3, 0.01)
-gui.add(group.position, 'x').min(-3).max(3).step(0.01).name("red cube x")
-gui.add(group, 'visible')
-
-
-
-const cube1 = new THREE.Mesh(
-    new THREE.BoxGeometry(1,1,1,5,5,5),
-    new THREE.MeshBasicMaterial({map : colorTexture})
-)
-group.add(cube1)
-
-
-
-gui.add(cube1.material, 'wireframe')
-gui.addColor(parameters, "color").onChange(()=>{
-    cube1.material.color.set(parameters.color)
-})
-gui.add(parameters, 'spin')
-
 
 /**
  * Sizes
@@ -99,6 +51,69 @@ window.addEventListener('resize', () =>
     renderer.setSize(sizes.width, sizes.height)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
+
+
+//objects
+
+// const material = new THREE.MeshBasicMaterial()
+// material.map = colorTexture
+// // material.color = new THREE.Color(0x00ff00)
+// // material.opacity=0.5
+// material.transparent=true
+// material.alphaMap= alphaTexture
+
+// const material = new THREE.MeshNormalMaterial()
+// material.flatShading = true
+
+// const material = new THREE.MeshMatcapMaterial()
+// material.matcap = matcapTexture
+
+// const material = new THREE.MeshDepthMaterial()
+
+// const material = new THREE.MeshLambertMaterial()
+
+// const material = new THREE.MeshPhongMaterial()
+// material.shininess = 100
+// material.specular = new THREE.Color('green')
+
+const material = new THREE.MeshToonMaterial()
+material.metalness = 0.45
+material.roughness = 0.45
+material.map = colorTexture
+material.aoMap = ambientOcclusionTexture
+material.aoMapIntensity = 10
+material.displacementMap = heightTexture
+material.displacementScale=5
+
+gui.add(material,"metalness").min(0).max(1).step(0.0001)
+gui.add(material,"roughness").min(0).max(1).step(0.0001)
+gui.add(material,"aoMapIntensity").min(0).max(100).step(0.0001)
+
+//LIGHT
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
+scene.add(ambientLight)
+const pointLight = new THREE.PointLight(0xffffff, 0.5)
+pointLight.position.x = 2
+pointLight.position.y = 3
+pointLight.position.z = 4
+scene.add(pointLight)
+
+const sphere = new THREE.Mesh(
+    new SphereGeometry(0.5,16,16), material
+)
+sphere.position.x=-1.5
+const plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(1,1), material
+)
+const tourus = new THREE.Mesh(
+    new THREE.TorusGeometry(.3,.2,16,32),material
+)
+tourus.position.x=1.5
+sphere.geometry.setAttribute('uv2', new THREE.BufferAttribute(sphere.geometry.attributes.uv.array, 2))
+plane.geometry.setAttribute('uv2', new THREE.BufferAttribute(plane.geometry.attributes.uv.array, 2))
+tourus.geometry.setAttribute('uv2', new THREE.BufferAttribute(tourus.geometry.attributes.uv.array, 2))
+
+scene.add(sphere,plane,tourus)
 
 /**
  * Camera
@@ -129,6 +144,12 @@ const clock = new THREE.Clock()
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
+    sphere.rotation.y= 0.1*elapsedTime
+    plane.rotation.y= 0.1*elapsedTime
+    tourus.rotation.y= 0.1*elapsedTime
+    sphere.rotation.x= 0.15*elapsedTime
+    plane.rotation.x= 0.15*elapsedTime
+    tourus.rotation.x= 0.15*elapsedTime
 
     // Update controls
     controls.update()
