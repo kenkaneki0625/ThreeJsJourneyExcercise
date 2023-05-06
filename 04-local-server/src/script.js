@@ -16,7 +16,7 @@ const normalTexture = textureLoader.load('/textures/door/normal.jpg')
 const ambientOcclusionTexture = textureLoader.load('/textures/door/ambientOcclusion.jpg')
 const metalnessTexture = textureLoader.load('/textures/door/metalness.jpg')
 const roughnessTexture = textureLoader.load('/textures/door/roughness.jpg')
-const matcapTexture = textureLoader.load('/textures/matcaps/1.png')
+const matcapTexture = textureLoader.load('/textures/matcaps/4.png')
 const gradientTexture = textureLoader.load('/textures/gradients/3.jpg')
 
 /**
@@ -54,14 +54,37 @@ window.addEventListener('resize', () =>
 
 //objects
 
-const material = new THREE.MeshBasicMaterial()
-material.map = colorTexture
-// material.color = new THREE.Color(0x00ff00)
-// material.opacity=0.5
-material.transparent=true
-material.alphaMap= alphaTexture
+// const material = new THREE.MeshBasicMaterial()
+// material.map = colorTexture
+// // material.color = new THREE.Color(0x00ff00)
+// // material.opacity=0.5
+// material.transparent=true
+// material.alphaMap= alphaTexture
 
+// const material = new THREE.MeshNormalMaterial()
+// material.flatShading = true
 
+// const material = new THREE.MeshMatcapMaterial()
+// material.matcap = matcapTexture
+
+// const material = new THREE.MeshDepthMaterial()
+
+// const material = new THREE.MeshLambertMaterial()
+
+// const material = new THREE.MeshPhongMaterial()
+// material.shininess = 100
+// material.specular = new THREE.Color('green')
+
+const material = new THREE.MeshToonMaterial()
+
+//LIGHT
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
+scene.add(ambientLight)
+const pointLight = new THREE.PointLight(0xffffff, 0.5)
+pointLight.position.x = 2
+pointLight.position.y = 3
+pointLight.position.z = 4
+scene.add(pointLight)
 
 const sphere = new THREE.Mesh(
     new SphereGeometry(0.5,16,16), material
