@@ -3,7 +3,9 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import gsap from 'gsap'
 import * as dat from 'dat.gui'
 import { SphereGeometry } from 'three'
-
+import {typefaceFont} from 'three/examples/fonts/helvetiker_regular.typeface.json'
+import {TextGeometry} from 'three/examples/jsm/geometries/TextGeometry'
+import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 //DEBUG
 const gui = new dat.GUI()
 
@@ -19,6 +21,10 @@ const metalnessTexture = textureLoader.load('/textures/door/metalness.jpg')
 const roughnessTexture = textureLoader.load('/textures/door/roughness.jpg')
 const matcapTexture = textureLoader.load('/textures/matcaps/4.png')
 const gradientTexture = textureLoader.load('/textures/gradients/3.jpg')
+
+const fontLoader = new FontLoader()
+// const textGeometry = new TextGeometry()
+
 
 /**
  * Base
@@ -52,69 +58,35 @@ window.addEventListener('resize', () =>
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
 
+// fontLoader.load(
+//     'three/examples/fonts/helvetiker_regular.typeface.json',
+//     (font)=>{
+//         const textGeometry = new TextGeometry(
+//             'Sneha',
+//             {
+//                 font, size: 0.5, height:0.2,curveSegments:12,
+//                 bevelEnabled:true, bevelThickness:0.03, bevelSize:0.02, bevelOffset:0,
+//                 bevelSegments:5
+//             }
+//         )
+//         const textMaterial = new THREE.MeshBasicMaterial()
+//         const text = new THREE.Mesh(textGeometry,textMaterial)
+//         scene.add(text)
+//     }
+// )
 
-//objects
 
-// const material = new THREE.MeshBasicMaterial()
-// material.map = colorTexture
-// // material.color = new THREE.Color(0x00ff00)
-// // material.opacity=0.5
-// material.transparent=true
-// material.alphaMap= alphaTexture
-
-// const material = new THREE.MeshNormalMaterial()
-// material.flatShading = true
-
-// const material = new THREE.MeshMatcapMaterial()
-// material.matcap = matcapTexture
-
-// const material = new THREE.MeshDepthMaterial()
-
-// const material = new THREE.MeshLambertMaterial()
-
-// const material = new THREE.MeshPhongMaterial()
-// material.shininess = 100
-// material.specular = new THREE.Color('green')
-
-const material = new THREE.MeshToonMaterial()
-material.metalness = 0.45
-material.roughness = 0.45
-material.map = colorTexture
-material.aoMap = ambientOcclusionTexture
-material.aoMapIntensity = 10
-material.displacementMap = heightTexture
-material.displacementScale=5
-
-gui.add(material,"metalness").min(0).max(1).step(0.0001)
-gui.add(material,"roughness").min(0).max(1).step(0.0001)
-gui.add(material,"aoMapIntensity").min(0).max(100).step(0.0001)
-
-//LIGHT
-const ambientLight = new THREE.AmbientLight(0xffffff, 0.5)
-scene.add(ambientLight)
-const pointLight = new THREE.PointLight(0xffffff, 0.5)
-pointLight.position.x = 2
-pointLight.position.y = 3
-pointLight.position.z = 4
-scene.add(pointLight)
-
-const sphere = new THREE.Mesh(
-    new SphereGeometry(0.5,16,16), material
+const textGeometry = new TextGeometry(
+    'Sneha',
+    {
+        font:typefaceFont, size: 0.5, height:0.2,curveSegments:12,
+        bevelEnabled:true, bevelThickness:0.03, bevelSize:0.02, bevelOffset:0,
+        bevelSegments:5
+    }
 )
-sphere.position.x=-1.5
-const plane = new THREE.Mesh(
-    new THREE.PlaneGeometry(1,1), material
-)
-const tourus = new THREE.Mesh(
-    new THREE.TorusGeometry(.3,.2,16,32),material
-)
-tourus.position.x=1.5
-sphere.geometry.setAttribute('uv2', new THREE.BufferAttribute(sphere.geometry.attributes.uv.array, 2))
-plane.geometry.setAttribute('uv2', new THREE.BufferAttribute(plane.geometry.attributes.uv.array, 2))
-tourus.geometry.setAttribute('uv2', new THREE.BufferAttribute(tourus.geometry.attributes.uv.array, 2))
-
-scene.add(sphere,plane,tourus)
-
+const textMaterial = new THREE.MeshBasicMaterial()
+const text = new THREE.Mesh(textGeometry,textMaterial)
+scene.add(text)
 /**
  * Camera
  */
@@ -144,12 +116,6 @@ const clock = new THREE.Clock()
 const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
-    sphere.rotation.y= 0.1*elapsedTime
-    plane.rotation.y= 0.1*elapsedTime
-    tourus.rotation.y= 0.1*elapsedTime
-    sphere.rotation.x= 0.15*elapsedTime
-    plane.rotation.x= 0.15*elapsedTime
-    tourus.rotation.x= 0.15*elapsedTime
 
     // Update controls
     controls.update()
