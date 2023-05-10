@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import gsap from 'gsap'
 import * as dat from 'dat.gui'
 import { SphereGeometry } from 'three'
-import {typefaceFont} from 'three/examples/fonts/helvetiker_regular.typeface.json'
+// import {typefaceFont} from 'three/examples/fonts/helvetiker_regular.typeface.json'
 import {TextGeometry} from 'three/examples/jsm/geometries/TextGeometry'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
 //DEBUG
@@ -12,18 +12,9 @@ const gui = new dat.GUI()
 
 const loadingManager = new THREE.LoadingManager()
 const textureLoader = new THREE.TextureLoader()
-const colorTexture = textureLoader.load('/textures/door/color.jpg')
-const alphaTexture = textureLoader.load('/textures/door/alpha.jpg')
-const heightTexture = textureLoader.load('/textures/door/height.jpg')
-const normalTexture = textureLoader.load('/textures/door/normal.jpg')
-const ambientOcclusionTexture = textureLoader.load('/textures/door/ambientOcclusion.jpg')
-const metalnessTexture = textureLoader.load('/textures/door/metalness.jpg')
-const roughnessTexture = textureLoader.load('/textures/door/roughness.jpg')
-const matcapTexture = textureLoader.load('/textures/matcaps/4.png')
-const gradientTexture = textureLoader.load('/textures/gradients/3.jpg')
+const matcapTexture = textureLoader.load('/matcaps/1.png')
 
 const fontLoader = new FontLoader()
-// const textGeometry = new TextGeometry()
 
 
 /**
@@ -34,6 +25,9 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
+
+const axesHelper = new THREE.AxesHelper()
+scene.add(axesHelper)
 
 /**
  * Sizes
@@ -58,35 +52,47 @@ window.addEventListener('resize', () =>
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 })
 
-// fontLoader.load(
-//     'three/examples/fonts/helvetiker_regular.typeface.json',
-//     (font)=>{
-//         const textGeometry = new TextGeometry(
-//             'Sneha',
-//             {
-//                 font, size: 0.5, height:0.2,curveSegments:12,
-//                 bevelEnabled:true, bevelThickness:0.03, bevelSize:0.02, bevelOffset:0,
-//                 bevelSegments:5
-//             }
-//         )
-//         const textMaterial = new THREE.MeshBasicMaterial()
-//         const text = new THREE.Mesh(textGeometry,textMaterial)
-//         scene.add(text)
-//     }
-// )
+fontLoader.load(
+    '/fonts/helvetiker_regular.typeface.json',
+    (font)=>{
+        const textGeometry = new TextGeometry(
+            'Sneha',
+            {
+                font, size: 0.5, height:0.2,curveSegments:5,
+                bevelEnabled:true, bevelThickness:0.03, bevelSize:0.02, bevelOffset:0,
+                bevelSegments:3
+            }
+        )
+        // textGeometry.computeBoundingBox()
+        // textGeometry.translate(
+        //     - textGeometry.boundingBox.max.x *0.5,
+        //     - textGeometry.boundingBox.max.y *0.5,
+        //     - textGeometry.boundingBox.max.z *0.5,
+        // )
+        textGeometry.center()
+        const textMaterial = new THREE.MeshMatcapMaterial({matcap:matcapTexture})
+        const text = new THREE.Mesh(textGeometry,textMaterial)
+        scene.add(text)
 
+        for(let i=0;i<100;i++){
+            const donutGeometry = new THREE.TorusGeometry(0.3,0.2,20,45)
+            const donutMaterial = new THREE.MeshMatcapMaterial({matcap:matcapTexture})
+            const donut = new THREE.Mesh(donutGeometry, donutMaterial)
 
-const textGeometry = new TextGeometry(
-    'Sneha',
-    {
-        font:typefaceFont, size: 0.5, height:0.2,curveSegments:12,
-        bevelEnabled:true, bevelThickness:0.03, bevelSize:0.02, bevelOffset:0,
-        bevelSegments:5
+            donut.position.x = (Math.random() - 0.5)*10
+            donut.position.y = (Math.random() - 0.5)*10
+            donut.position.z = (Math.random() - 0.5)*10
+            donut.rotation.x = Math.random() * Math.PI
+            donut.rotation.y = Math.random() * Math.PI
+
+            const scale = Math.random()
+            donut.scale.set(scale,scale,scale)
+            scene.add(donut)
+        }
     }
 )
-const textMaterial = new THREE.MeshBasicMaterial()
-const text = new THREE.Mesh(textGeometry,textMaterial)
-scene.add(text)
+
+
 /**
  * Camera
  */
