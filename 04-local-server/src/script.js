@@ -1,18 +1,10 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import gsap from 'gsap'
-import * as dat from 'dat.gui'
-import { SphereGeometry } from 'three'
-// import {typefaceFont} from 'three/examples/fonts/helvetiker_regular.typeface.json'
 import {TextGeometry} from 'three/examples/jsm/geometries/TextGeometry'
 import { FontLoader } from 'three/examples/jsm/loaders/FontLoader'
-//DEBUG
-const gui = new dat.GUI()
 
-
-const loadingManager = new THREE.LoadingManager()
 const textureLoader = new THREE.TextureLoader()
-const matcapTexture = textureLoader.load('/matcaps/1.png')
+const matcapTexture = textureLoader.load('/matcaps/8.png')
 
 const fontLoader = new FontLoader()
 
@@ -26,8 +18,8 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
-const axesHelper = new THREE.AxesHelper()
-scene.add(axesHelper)
+// const axesHelper = new THREE.AxesHelper()
+// scene.add(axesHelper)
 
 /**
  * Sizes
@@ -56,7 +48,7 @@ fontLoader.load(
     '/fonts/helvetiker_regular.typeface.json',
     (font)=>{
         const textGeometry = new TextGeometry(
-            'Sneha',
+            'Sneha is best bunu',
             {
                 font, size: 0.5, height:0.2,curveSegments:5,
                 bevelEnabled:true, bevelThickness:0.03, bevelSize:0.02, bevelOffset:0,
@@ -70,14 +62,15 @@ fontLoader.load(
         //     - textGeometry.boundingBox.max.z *0.5,
         // )
         textGeometry.center()
-        const textMaterial = new THREE.MeshMatcapMaterial({matcap:matcapTexture})
-        const text = new THREE.Mesh(textGeometry,textMaterial)
+        const material = new THREE.MeshMatcapMaterial({matcap:matcapTexture})
+        const text = new THREE.Mesh(textGeometry,material)
         scene.add(text)
 
+        const donutGeometry = new THREE.TorusGeometry(0.3,0.2,20,45)
+            
+
         for(let i=0;i<100;i++){
-            const donutGeometry = new THREE.TorusGeometry(0.3,0.2,20,45)
-            const donutMaterial = new THREE.MeshMatcapMaterial({matcap:matcapTexture})
-            const donut = new THREE.Mesh(donutGeometry, donutMaterial)
+            const donut = new THREE.Mesh(donutGeometry, material)
 
             donut.position.x = (Math.random() - 0.5)*10
             donut.position.y = (Math.random() - 0.5)*10
