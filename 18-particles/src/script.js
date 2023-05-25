@@ -61,10 +61,10 @@ scene.add(particles)
 
 
 //cube
-const cube = new THREE.Mesh(
-    new THREE.BoxGeometry(), new THREE.MeshBasicMaterial()
-)
-scene.add(cube)
+// const cube = new THREE.Mesh(
+//     new THREE.BoxGeometry(), new THREE.MeshBasicMaterial()
+// )
+// scene.add(cube)
 /**
  * Sizes
  */
@@ -118,6 +118,19 @@ const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
 
+    //update particles
+    // particles.position.y = - elapsedTime * 0.2
+    // particles.rotation.x = - elapsedTime * 0.2
+
+    //waves
+    //bad idea -> good idea is to use shaders
+    // for(let i = 0; i<count;i++){
+    //     const i3 = i*3
+    //     const x = particlesGeometry.attributes.position.array[i3]
+    //     particlesGeometry.attributes.position.array[i3+1] = Math.sin(elapsedTime+x)
+    // }
+    // particlesGeometry.attributes.position.needsUpdate = true
+    
     // Update controls
     controls.update()
 
