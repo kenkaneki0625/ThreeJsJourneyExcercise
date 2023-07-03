@@ -17,6 +17,18 @@ debugObject.createSphere = () =>{
     })
 }
 gui.add(debugObject,'createSphere')
+debugObject.createBox = () =>{
+    createBox(
+        Math.random() *0.5,
+        Math.random() *0.5,
+        Math.random() *0.5,
+        {
+        x:(Math.random()-0.3) *0.5,
+        y:3,
+        z:(Math.random()-0.3) *0.5
+    })
+}
+gui.add(debugObject,'createBox')
 
 /**
  * Base
@@ -184,6 +196,36 @@ const createSphere = (radius, position) => {
     objectsToUpdate.push({mesh,body})
 }
 
+const boxGeometry = new THREE.BoxGeometry(1, 1,1)
+const boxMaterial = new THREE.MeshStandardMaterial({
+    metalness: 0.3, roughness: 0.4, envMap: environmentMapTexture
+})
+
+const createBox = (width, height, depth, position) => {
+    const mesh = new THREE.Mesh(
+        boxGeometry,
+        boxMaterial
+    )
+    mesh.scale.set(width,height,depth)
+
+    mesh.castShadow = true
+    mesh.position.copy(position)
+    scene.add(mesh)
+
+    //cannonjs body
+    const shape = new CANNON.Box(new CANNON.Vec3(width*0.5,height*0.5,depth*0.5))
+    const body = new CANNON.Body({
+        mass:1,
+        position: new CANNON.Vec3(0,3,0),
+        shape,
+        material:defaultMaterial
+    })
+    body.position.copy(position)
+    world.addBody(body)
+
+    objectsToUpdate.push({mesh,body})
+}
+
 /**
  * Animate
  */
@@ -200,6 +242,7 @@ const tick = () =>
 
     for(const objects of objectsToUpdate){
         objects.mesh.position.copy(objects.body.position)
+        objects.mesh.quaternion.copy(objects.body.quaternion)
     }
 
     //update physics world
