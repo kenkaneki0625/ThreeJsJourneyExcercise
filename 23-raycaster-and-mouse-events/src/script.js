@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as dat from 'lil-gui'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 
 THREE.ColorManagement.enabled = false
 
@@ -15,6 +16,33 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
+
+/**
+ * Lights
+ */
+// Ambient light
+const ambientLight = new THREE.AmbientLight('#ffffff', 0.3)
+scene.add(ambientLight)
+
+// Directional light
+const directionalLight = new THREE.DirectionalLight('#ffffff', 0.7)
+directionalLight.position.set(1, 2, 3)
+scene.add(directionalLight)
+
+/**
+ * Model
+ */
+const gltfLoader = new GLTFLoader()
+let model = null
+gltfLoader.load(
+    './models/Duck/glTF-Binary/Duck.glb',
+    (gltf) =>
+    {
+        model = gltf.scene
+        model.position.y = - 1.2
+        scene.add(gltf.scene)
+    }
+)
 
 /**
  * Objects
@@ -178,6 +206,21 @@ const tick = () =>
         }
         
         currentIntersect = null
+    }
+
+    // Test intersect with a model
+    if(model)
+    {
+        const modelIntersects = raycaster.intersectObject(model)
+        
+        if(modelIntersects.length)
+        {
+            model.scale.set(1.2, 1.2, 1.2)
+        }
+        else
+        {
+            model.scale.set(1, 1, 1)
+        }
     }
 
 
